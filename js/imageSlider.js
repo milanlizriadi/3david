@@ -2,6 +2,7 @@ window.addEventListener("load", () => {
   const lenis = new Lenis();
   function raf(time) {
     lenis.raf(time);
+
     requestAnimationFrame(raf);
   }
   requestAnimationFrame(raf);
@@ -119,7 +120,7 @@ window.addEventListener("load", () => {
       "Japan",
     ];
 
-    function updateTexture(offset = 0) {
+    function updateTexture(offset = 0, textOffset = 0) {
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);
 
@@ -180,10 +181,14 @@ window.addEventListener("load", () => {
           ctx.restore();
 
           ctx.fillStyle = "white";
+          ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
+          ctx.shadowBlur = 18;
+          ctx.shadowOffsetX = 4;
+          ctx.shadowOffsetY = 4;
           ctx.fillText(
             slideTitles[slideIndex],
             textureCanvas.width / 2,
-            wrappedY + slideRect.height / 2
+            wrappedY + slideRect.height / 2 + textOffset
           );
         }
       }
@@ -194,7 +199,10 @@ window.addEventListener("load", () => {
     let currentScroll = 0;
     lenis.on("scroll", ({ scroll, limit, velocity, direction, progress }) => {
       currentScroll = scroll / limit;
-      updateTexture(-currentScroll);
+
+      const textOffset = velocity * 1.5; // tweak this factor to make it stronger or smoother
+
+      updateTexture(-currentScroll, textOffset);
       renderer.render(scene, camera);
     });
 
